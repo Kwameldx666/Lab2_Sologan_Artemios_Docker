@@ -3,7 +3,7 @@ using TaskService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Регистрация сервисов
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
