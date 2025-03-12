@@ -11,10 +11,11 @@ services:
       - mynetwork
     restart: always
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "1433"]
-      interval: 10s
-      timeout: 5s
-      retries: 15
+      test: ["CMD", "curl", "-f", "http://localhost:1433"]
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 30s
 
   task-service:
     build:
