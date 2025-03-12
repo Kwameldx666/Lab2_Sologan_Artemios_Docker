@@ -20,7 +20,7 @@ services:
     build:
       context: ./TaskService
       dockerfile: Dockerfile
-    image: wonderfull_by/task-service:latest 
+    image: kwameldx666/task-service:latest 
     ports:
       - "5001:5001"
     environment:
@@ -41,7 +41,7 @@ services:
     build:
       context: ./CategoryService
       dockerfile: Dockerfile
-    image: wonderfull_by/category-service:latest 
+    image: kwameldx666/category-service:latest 
     ports:
       - "5000:5000"
     environment:
