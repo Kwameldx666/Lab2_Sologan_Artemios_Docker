@@ -72,8 +72,6 @@ jobs:
             sleep 10
           done
 
-
-
       # 8. Очистка после тестов
       - name: Cleanup
         if: always()
