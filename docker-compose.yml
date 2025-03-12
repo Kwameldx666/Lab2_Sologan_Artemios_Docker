@@ -1,0 +1,63 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+    container_name: sql-server-container
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Kwameldx666
+    networks:
+      - mynetwork
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "sqlcmd -S localhost -U sa -P Kwameldx666 -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  task-service:
+    build:
+      context: ./TaskService
+      dockerfile: Dockerfile
+    image: wonderfull_by/task-service:latest 
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=sql-server-container,1433;Database=TaskDb;User Id=sa;Password=Kwameldx666;TrustServerCertificate=true
+    networks:
+      - mynetwork
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/Tasks"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  category-service:
+    build:
+      context: ./CategoryService
+      dockerfile: Dockerfile
+    image: wonderfull_by/category-service:latest 
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=sql-server-container,1433;Database=CategoryDb;User Id=sa;Password=Kwameldx666;TrustServerCertificate=true
+    networks:
+      - mynetwork
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/Categories"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  mynetwork:
+    driver: bridge
