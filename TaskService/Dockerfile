@@ -1,14 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 WORKDIR /app
-COPY *.csproj ./
-RUN dotnet restore
-COPY . ./
+COPY . .
+RUN dotnet build
 RUN apt-get update && apt-get install -y netcat-openbsd
-RUN dotnet publish -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out .
-EXPOSE 5001
-ENV ASPNETCORE_URLS=http://+:5001
-ENTRYPOINT ["dotnet", "TaskService.dll"]
+ENTRYPOINT ["/bin/sh", "-c", "until nc -z sql-server-container 1433; do sleep 1; done && dotnet TaskService.dll"]

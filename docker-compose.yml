@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   sql-server:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
     container_name: sql-server-container
     ports:
       - "1433:1433"
@@ -12,7 +12,6 @@ services:
       - MSSQL_MEMORY_LIMIT_MB=2048
     networks:
       - mynetwork
-    restart: always
 
   task-service:
     build:
@@ -28,7 +27,6 @@ services:
       - mynetwork
     depends_on:
       - sql-server
-    entrypoint: /bin/sh -c "until nc -z sql-server-container 1433; do sleep 1; done && dotnet TaskService.dll"
 
   category-service:
     build:
@@ -44,7 +42,6 @@ services:
       - mynetwork
     depends_on:
       - sql-server
-    entrypoint: /bin/sh -c "until nc -z sql-server-container 1433; do sleep 1; done && dotnet CategoryService.dll"
 
 networks:
   mynetwork:
