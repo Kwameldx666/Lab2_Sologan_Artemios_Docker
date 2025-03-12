@@ -10,12 +10,6 @@ services:
     networks:
       - mynetwork
     restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:1433"]
-      interval: 30s
-      retries: 3
-      start_period: 30s
-      timeout: 30s
 
   task-service:
     build:
@@ -31,12 +25,7 @@ services:
       - mynetwork
     depends_on:
       sql-server:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/api/Tasks"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+        condition: service_started
 
   category-service:
     build:
@@ -52,12 +41,7 @@ services:
       - mynetwork
     depends_on:
       sql-server:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/Categories"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+        condition: service_started
 
 networks:
   mynetwork:
