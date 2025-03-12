@@ -57,17 +57,9 @@ jobs:
         run: |
           docker-compose logs
 
-      - name: Install mssql-tools in SQL Server container
-        run: |
-          docker exec -u root sql-server-container /bin/bash -c "apt-get update && apt-get install -y gnupg curl"
-          docker exec -u root sql-server-container /bin/bash -c "curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -"
-          docker exec -u root sql-server-container /bin/bash -c "curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list"
-          docker exec -u root sql-server-container /bin/bash -c "apt-get update && ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev"
-          docker exec -u root sql-server-container /bin/bash -c "echo 'export PATH=\"\$PATH:/opt/mssql-tools/bin\"' >> /root/.bashrc"
-
       - name: Wait for SQL Server
         run: |
-          until docker exec sql-server-container /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Kwameldx666 -Q "SELECT 1"; do
+          until docker exec sql-server-container nc -z localhost 1433; do
             echo "Waiting for SQL Server..."
             sleep 5
           done
