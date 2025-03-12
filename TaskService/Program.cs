@@ -12,7 +12,7 @@ builder.Services.AddDbContext<TaskDbContext>(options =>
 
 var app = builder.Build();
 
-// Конфигурация middleware
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthorization();
