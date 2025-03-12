@@ -9,6 +9,7 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Kwameldx666
+      - MSSQL_MEMORY_LIMIT_MB=1024
     networks:
       - mynetwork
     restart: always
