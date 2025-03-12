@@ -6,8 +6,6 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
-# Переменные окружения
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -25,55 +23,49 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3. Логин в Docker Hub
+      # 3. Установка docker-compose
+      - name: Install docker-compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version  # Проверка установки
+
+      # 4. Логин в Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
+          registry: docker.io
 
-      # 4. Сборка и пуш Docker-образов для task-service и category-service
+      # 5. Сборка и пуш Docker-образов
       - name: Build and push Docker images
         run: |
-          # Сборка и пуш task-service
           docker build -t ${{ env.DOCKERHUB_USERNAME }}/task-service:${{ github.sha }} ./TaskService
           docker push ${{ env.DOCKERHUB_USERNAME }}/task-service:${{ github.sha }}
           docker tag ${{ env.DOCKERHUB_USERNAME }}/task-service:${{ github.sha }} ${{ env.DOCKERHUB_USERNAME }}/task-service:latest
           docker push ${{ env.DOCKERHUB_USERNAME }}/task-service:latest
 
-          # Сборка и пуш category-service
           docker build -t ${{ env.DOCKERHUB_USERNAME }}/category-service:${{ github.sha }} ./CategoryService
           docker push ${{ env.DOCKERHUB_USERNAME }}/category-service:${{ github.sha }}
           docker tag ${{ env.DOCKERHUB_USERNAME }}/category-service:${{ github.sha }} ${{ env.DOCKERHUB_USERNAME }}/category-service:latest
           docker push ${{ env.DOCKERHUB_USERNAME }}/category-service:latest
 
-      # 5. Разворачиваем контейнеры через docker-compose
+      # 6. Разворачиваем контейнеры через docker-compose
       - name: Deploy containers
         run: |
           docker-compose up -d
 
-      # 6. Проверка работоспособности через curl
+      # 7. Проверка работоспособности через curl
       - name: Test containers health
         run: |
-          # Даем время контейнерам запуститься и пройти healthcheck
-          sleep 60
-          # Проверка task-service
+          sleep 90
           curl --retry 5 --retry-delay 5 --retry-max-time 60 http://localhost:5001/api/Tasks || exit 1
-          # Проверка category-service
           curl --retry 5 --retry-delay 5 --retry-max-time 60 http://localhost:5000/api/Categories || exit 1
 
-      # 7. Очистка после тестов
+      # 8. Очистка после тестов
       - name: Cleanup
         if: always()
         run: |
           docker-compose down --volumes --rmi all
           docker system prune -f
-
-      # 8. Коммит и пуш изменений (если нужно)
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add .
-          git commit -m "Update from CI/CD pipeline" || echo "No changes to commit"
-          git push
