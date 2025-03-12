@@ -57,6 +57,11 @@ jobs:
         run: |
           docker-compose logs
 
+      # Новый шаг: Установка netcat в sql-server-container
+      - name: Install netcat in SQL Server container
+        run: |
+          docker exec -u root sql-server-container /bin/bash -c "apt-get update && apt-get install -y netcat"
+
       - name: Wait for SQL Server
         run: |
           until docker exec sql-server-container nc -z localhost 1433; do
