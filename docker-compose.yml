@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   sql-server:
     image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
@@ -15,7 +17,7 @@ services:
     build:
       context: ./TaskService
       dockerfile: Dockerfile
-    image: kwameldx666/task-service:latest 
+    image: kwameldx666/task-service:latest
     ports:
       - "5001:5001"
     environment:
@@ -24,14 +26,14 @@ services:
     networks:
       - mynetwork
     depends_on:
-      sql-server:
-        condition: service_started
+      - sql-server
+    entrypoint: /bin/sh -c "sleep 30 && dotnet TaskService.dll"  
 
   category-service:
     build:
       context: ./CategoryService
       dockerfile: Dockerfile
-    image: kwameldx666/category-service:latest 
+    image: kwameldx666/category-service:latest
     ports:
       - "5000:5000"
     environment:
@@ -40,8 +42,8 @@ services:
     networks:
       - mynetwork
     depends_on:
-      sql-server:
-        condition: service_started
+      - sql-server
+    entrypoint: /bin/sh -c "sleep 30 && dotnet CategoryService.dll" 
 
 networks:
   mynetwork:
