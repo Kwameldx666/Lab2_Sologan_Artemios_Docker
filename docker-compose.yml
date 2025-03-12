@@ -27,7 +27,7 @@ services:
       - mynetwork
     depends_on:
       - sql-server
-    entrypoint: /bin/sh -c "sleep 100 && dotnet TaskService.dll"  
+    entrypoint: /bin/sh -c "until nc -z sql-server-container 1433; do sleep 1; done && dotnet TaskService.dll"
 
   category-service:
     build:
@@ -43,7 +43,7 @@ services:
       - mynetwork
     depends_on:
       - sql-server
-    entrypoint: /bin/sh -c "sleep 150 && dotnet CategoryService.dll" 
+    entrypoint: /bin/sh -c "until nc -z sql-server-container 1433; do sleep 1; done && dotnet CategoryService.dll"
 
 networks:
   mynetwork:
