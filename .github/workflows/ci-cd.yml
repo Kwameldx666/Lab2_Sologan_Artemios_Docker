@@ -3,9 +3,9 @@ name: CI/CD Pipeline
 # Триггеры для запуска workflow
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 # Переменные окружения
 env:
