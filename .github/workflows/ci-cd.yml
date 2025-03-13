@@ -70,7 +70,7 @@ jobs:
           done
       - name: Check container logs after delay
         run: |
-          sleep 60  # Даем время сервисам запуститься и сгенерировать логи
+          sleep 60  
           docker-compose logs    
 
       - name: Test containers health
