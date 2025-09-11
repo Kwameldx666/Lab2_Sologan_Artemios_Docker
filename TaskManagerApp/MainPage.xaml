@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TaskManagerApp.MainPage"
+             Title="Task Manager">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="20">
+            
+            <Label
+                Text="Task Manager App"
+                Style="{StaticResource Headline}"
+                HorizontalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1" />
+
+            <Label
+                Text="Powered by .NET 9 MAUI"
+                Style="{StaticResource SubHeadline}"
+                HorizontalOptions="Center"
+                SemanticProperties.HeadingLevel="Level2" />
+
+            <!-- Tasks Section -->
+            <Frame BackgroundColor="LightBlue" Padding="15" CornerRadius="10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Tasks" FontSize="18" FontAttributes="Bold" />
+                    <Button x:Name="LoadTasksBtn" 
+                            Text="Load All Tasks" 
+                            Clicked="OnLoadTasksClicked" 
+                            BackgroundColor="Blue" 
+                            TextColor="White" />
+                    <Button x:Name="CreateTaskBtn" 
+                            Text="Create Sample Task" 
+                            Clicked="OnCreateTaskClicked" 
+                            BackgroundColor="Green" 
+                            TextColor="White" />
+                    <CollectionView x:Name="TasksCollectionView" MaximumHeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="10" RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0" Text="{Binding Title}" FontAttributes="Bold" />
+                                    <Label Grid.Row="1" Text="{Binding IsComplete, StringFormat='Completed: {0}'}" FontSize="12" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Categories Section -->
+            <Frame BackgroundColor="LightGreen" Padding="15" CornerRadius="10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Categories" FontSize="18" FontAttributes="Bold" />
+                    <Button x:Name="LoadCategoriesBtn" 
+                            Text="Load All Categories" 
+                            Clicked="OnLoadCategoriesClicked" 
+                            BackgroundColor="DarkGreen" 
+                            TextColor="White" />
+                    <Button x:Name="CreateCategoryBtn" 
+                            Text="Create Sample Category" 
+                            Clicked="OnCreateCategoryClicked" 
+                            BackgroundColor="Orange" 
+                            TextColor="White" />
+                    <CollectionView x:Name="CategoriesCollectionView" MaximumHeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="10" RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0" Text="{Binding Name}" FontAttributes="Bold" />
+                                    <Label Grid.Row="1" Text="{Binding TaskIds.Count, StringFormat='Tasks: {0}'}" FontSize="12" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Status Label -->
+            <Label x:Name="StatusLabel" 
+                   Text="Ready to connect to APIs" 
+                   HorizontalOptions="Center"
+                   FontSize="14"
+                   TextColor="Gray" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
